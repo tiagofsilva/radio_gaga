@@ -28,22 +28,30 @@ describe Music do
       end
     end
     
-    it "should return the correct title" do
-      @music.title.should eql "Murder me Rachel"
+    describe "#title" do
+      it "should return the correct title" do
+        @music.title.should eql "Murder me Rachel"
+      end  
     end
     
-    it "should return the correct author" do
-      @music.author.should eql "The National"
+    describe "#author" do
+      it "should return the correct author" do
+        @music.author.should eql "The National"
+      end  
+    end  
+    
+    describe "#album" do
+      it "should return the correct album" do
+        @music.album.should eql "Alligator"
+      end  
     end
     
-    it "should return the correct album" do
-      @music.album.should eql "Alligator"
+    describe "#style" do
+      it "should return the correct style" do
+        @music.style.should eql :indie_rock
+      end
     end
-    
-    it "should return the correct style" do
-      @music.style.should eql :indie_rock
-    end
-    
+        
   end
   
   

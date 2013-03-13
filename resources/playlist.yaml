@@ -1,0 +1,16 @@
+---
+- !ruby/object:Music
+  title: Pigeon knows
+  author: Tiny ruins
+  album: Tiny ruins
+  style: :folk
+- !ruby/object:Music
+  title: Livin on a prayer
+  author: Bon Jovi
+  album: Greatest hits
+  style: :rock
+- !ruby/object:Music
+  title: Smashing Pumpkins
+  author: Zero
+  album: Mellon Collie
+  style: :rock
