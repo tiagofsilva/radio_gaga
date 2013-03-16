@@ -10,7 +10,7 @@
   album: Greatest hits
   style: :rock
 - !ruby/object:Music
-  title: Smashing Pumpkins
-  author: Zero
+  title: Zero
+  author: Smashing Pumpkins
   album: Mellon Collie
   style: :rock

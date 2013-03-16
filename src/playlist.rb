@@ -12,14 +12,17 @@ class Playlist
      elsif songs.is_a? String then @songs = YAML::load File.read(songs)
     end
     
-    commit
+    persist
       
+  end
+  
+  def size
+    @songs.size
   end
   
   def add music
     songs = @songs.dup
     songs << music
-    p "yaml: " + songs.to_s
     @redis.hset redis_id, "songs", YAML::dump(songs.flatten) 
   end
   
@@ -27,8 +30,8 @@ class Playlist
     songs = @songs.dup
     options.each do |key, val|
       songs.select! {|song| eval("song.#{key}") == val}  
-    end  
-    
+    end 
+    return songs.size == 1? songs.first : songs 
   end
   
   def songs
@@ -41,7 +44,7 @@ class Playlist
   end
   
 private  
-  def commit
+  def persist
     @redis = Redis.new
     @id = @redis.incr "#{self.class.name.downcase}:id" 
     @redis.hset "#{self.class.name.downcase}", "id", @id
