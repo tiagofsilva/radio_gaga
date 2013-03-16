@@ -16,6 +16,26 @@ class Playlist
       
   end
   
+  def add music
+    songs = @songs.dup
+    songs << music
+    p "yaml: " + songs.to_s
+    @redis.hset redis_id, "songs", YAML::dump(songs.flatten) 
+  end
+  
+  def find_by options = {}
+    songs = @songs.dup
+    options.each do |key, val|
+      songs.select! {|song| eval("song.#{key}") == val}  
+    end  
+    
+  end
+  
+  def songs
+    result = YAML::load(@redis.hget redis_id, "songs")
+  end
+  
+  
   def empty?
     @songs.empty?
   end
@@ -25,6 +45,11 @@ private
     @redis = Redis.new
     @id = @redis.incr "#{self.class.name.downcase}:id" 
     @redis.hset "#{self.class.name.downcase}", "id", @id
+    @redis.hset redis_id, "songs", YAML::dump(@songs)
+  end
+  
+  def redis_id
+    "#{self.class.name.downcase}:#{@id}"
   end
   
 end

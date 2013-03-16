@@ -7,7 +7,7 @@ class Music
   end 
   
   def ==(music)
-    self.title == music.title && self.author == music.author && self.album == music.album && self.style == music.style
+    @title == music.title && @author == music.author && @album == music.album && @style == music.style
   end
   
 end

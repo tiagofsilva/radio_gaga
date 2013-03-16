@@ -67,4 +67,20 @@ describe Playlist do
     end
   end
   
+  describe "#songs" do
+    it "get all songs from the playlist" do
+      @playlist.songs.should == @songs_arr
+    end
+  end
+  
+  describe "#add" do
+    it "adds a song to the playlist" do
+      @playlist.add(Music.new "40", "U2", "War", :rock)
+      @playlist.songs.should_not == @songs_arr
+      @playlist.songs.size.should eql 4
+    end
+  end
+  
+    
+  
 end
