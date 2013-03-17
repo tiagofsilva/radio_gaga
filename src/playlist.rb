@@ -6,49 +6,58 @@ class Playlist
   attr_accessor :name, :songs
   attr_reader :id
   
-  def initialize name, songs = []
+  def initialize name, songz = []
     @name = name
-    if songs.is_a? Array then @songs = songs
-     elsif songs.is_a? String then @songs = YAML::load File.read(songs)
+    if songz.is_a? Array then persist songz
+     elsif songz.is_a? String then persist(YAML::load File.read(songz))
     end
     
-    persist
-      
   end
   
   def size
-    @songs.size
-  end
-  
-  def add music
-    songs = @songs.dup
-    songs << music
-    @redis.hset redis_id, "songs", YAML::dump(songs.flatten) 
-  end
-  
-  def find_by options = {}
-    songs = @songs.dup
-    options.each do |key, val|
-      songs.select! {|song| eval("song.#{key}") == val}  
-    end 
-    return songs.size == 1? songs.first : songs 
+    songs.size
   end
   
   def songs
-    result = YAML::load(@redis.hget redis_id, "songs")
+    YAML::load(@redis.hget redis_id, "songs")
   end
   
   
   def empty?
-    @songs.empty?
+    songs.empty?
   end
   
+  def add music
+    if music.nil? then return false end
+    songz = songs
+    songz << music
+    @redis.hset redis_id, "songs", YAML::dump(songz.flatten) 
+  end
+  
+  
+  def find_by options = {}
+    filtered = songs
+    options.each do |key, val|
+      filtered.select! {|song| eval("song.#{key}") == val}  
+    end 
+    return filtered.size == 1? filtered.first : filtered 
+  end
+  
+  def remove_by options = {}
+   all_songs = songs 
+   selected = find_by options
+   all_songs.delete selected
+   @redis.hset redis_id, "songs", YAML::dump(all_songs.flatten)
+   return selected
+  end
+  
+  
 private  
-  def persist
+  def persist songz
     @redis = Redis.new
     @id = @redis.incr "#{self.class.name.downcase}:id" 
     @redis.hset "#{self.class.name.downcase}", "id", @id
-    @redis.hset redis_id, "songs", YAML::dump(@songs)
+    @redis.hset redis_id, "songs", YAML::dump(songz)
   end
   
   def redis_id

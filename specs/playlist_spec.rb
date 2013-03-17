@@ -143,6 +143,18 @@ describe Playlist do
     
   end
   
+  describe "#remove_by" do
+    context "when one existing attribute is passed" do
+      it "removes the music from the playlist" do
+        music_before = @playlist.find_by :title => "Zero"
+        @playlist.remove_by :title => "Zero"
+        music_after = @playlist.find_by :title => "Zero"
+        music_before.title.should eql "Zero"
+        music_after.should be_empty
+      end
+    end
+  end
+  
     
   
 end
