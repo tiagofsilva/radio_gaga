@@ -40,14 +40,15 @@ class Playlist
     options.each do |key, val|
       filtered.select! {|song| eval("song.#{key}") == val}  
     end 
-    return filtered.size == 1? filtered.first : filtered 
+    return filtered 
   end
   
   def remove_by options = {}
    all_songs = songs 
    selected = find_by options
-   all_songs.delete selected
-   @redis.hset redis_id, "songs", YAML::dump(all_songs.flatten)
+   diff = all_songs.reject {|song| selected.include? song}
+   
+   @redis.hset redis_id, "songs", YAML::dump(diff.flatten)
    return selected
   end
   
@@ -56,8 +57,10 @@ private
   def persist songz
     @redis = Redis.new
     @id = @redis.incr "#{self.class.name.downcase}:id" 
-    @redis.hset "#{self.class.name.downcase}", "id", @id
+    @redis.hset redis_id, "id", @id
+    @redis.hset redis_id, "name", name
     @redis.hset redis_id, "songs", YAML::dump(songz)
+    
   end
   
   def redis_id

@@ -10,4 +10,5 @@ class Music
     @title == music.title && @author == music.author && @album == music.album && @style == music.style
   end
   
+  
 end

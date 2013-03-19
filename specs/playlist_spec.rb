@@ -116,14 +116,14 @@ describe Playlist do
     context "when looking for a song by title only" do
       it "finds one song matching description" do
         music = @playlist.find_by :title => "Pigeon knows"
-        music.should == @songs_arr.first
+        music.first.should == @songs_arr.first
       end
     end
     
     context "when looking for a song by author only" do
       it "finds one song matching description" do
         music = @playlist.find_by :author => "Bon Jovi"
-        music.should == @songs_arr[1]
+        music.first.should == @songs_arr[1]
       end
     end
     
@@ -137,7 +137,7 @@ describe Playlist do
     context "when looking for a song by more than one attribute" do
       it "finds one or more song matching description" do
         musics = @playlist.find_by :author => "Smashing Pumpkins", :style => :rock
-        musics.should == @songs_arr[2]
+        musics.first.should == @songs_arr[2]
       end
     end
     
@@ -149,10 +149,34 @@ describe Playlist do
         music_before = @playlist.find_by :title => "Zero"
         @playlist.remove_by :title => "Zero"
         music_after = @playlist.find_by :title => "Zero"
-        music_before.title.should eql "Zero"
+        music_before.first.title.should eql "Zero"
         music_after.should be_empty
       end
+      
     end
+    
+    context "when a non existing attribute is passed" do
+      it "does not remove the song from the playlist" do
+        expect {@playlist.remove_by :theme => "Zero"}.to raise_exception
+      end
+    end
+    
+    context "when more than one song is selected" do
+      it "removes all selected songs" do
+        selected = @playlist.remove_by :style => :rock
+        @playlist.songs.should have(1).items
+        selected.should have(2).items
+      end
+    end
+    
+    context "when more than one attribute is passed" do
+      it "removes all selected songs from playlist" do
+        selected = @playlist.remove_by :title=>"Zero", :style => :rock
+        @playlist.songs.should have(2).items
+        selected.should have(1).items
+      end
+    end
+    
   end
   
     
